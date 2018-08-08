@@ -48,6 +48,8 @@ namespace Xenko.Input
             CoreWindow coreWindow;
             if (nativeWindow.Context == AppContextType.UWPCoreWindow)
                 coreWindow = (CoreWindow)nativeWindow.NativeWindow;
+            else if (nativeWindow.Context == AppContextType.UWPMixedReality)
+                coreWindow = (CoreWindow)nativeWindow.NativeWindow;
             else if(nativeWindow.Context == AppContextType.UWPXaml)
                 coreWindow = Window.Current.CoreWindow;
             else

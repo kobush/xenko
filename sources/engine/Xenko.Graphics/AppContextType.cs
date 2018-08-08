@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2012 SharpDX - Alexandre Mutel
@@ -62,6 +62,11 @@ namespace Xenko.Games
         /// Game running on UWP in a CoreWindow.
         /// </summary>
         UWPCoreWindow,
+        
+        /// <summary>
+        /// Game running on UWP Mixed Reality in a CoreWindow.
+        /// </summary>
+        UWPMixedReality,
 
         /// <summary>
         /// Game running on iOS in a iPhoneOSGameView.

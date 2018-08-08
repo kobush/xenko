@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
@@ -76,9 +76,54 @@ namespace Xenko.Games
             {
                 return new GameWindowUWP();
             }
+            else if (type == AppContextType.UWPMixedReality)
+            {
+                return new GameWindowUWPMixedReality();
+            }
             else
             {
                 return null;
+            }
+        }
+
+        public override GraphicsDevice CreateDevice(GraphicsDeviceInformation deviceInformation)
+        {
+            if (gameWindow is GameWindowUWPMixedReality mixedRealityGameWindow)
+            {
+                //TODO: move this to FindBestDevices
+                // When a primary adapter ID is given to the app, the app should find
+                // the corresponding DXGI adapter and use it to create Direct3D devices
+                // and device contexts. Otherwise, there is no restriction on the DXGI
+                // adapter the app can use.
+                var id = mixedRealityGameWindow.GetPreferredAdapterId();
+                if (id != 0)
+                {
+                    var adapterUid = id.ToString();
+                    foreach (var adapter in GraphicsAdapterFactory.Adapters)
+                    {
+                        if (adapter.AdapterUid == adapterUid)
+                        {
+                            deviceInformation.Adapter = adapter;
+                            break;
+                        }
+                    }
+                }
+
+                // required
+                deviceInformation.DeviceCreationFlags |= DeviceCreationFlags.BgraSupport;
+
+                var graphicsDevice = GraphicsDevice.New(deviceInformation.Adapter, deviceInformation.DeviceCreationFlags,
+                    gameWindow.NativeWindow, deviceInformation.GraphicsProfile);
+
+                graphicsDevice.ColorSpace = deviceInformation.PresentationParameters.ColorSpace;
+                graphicsDevice.Presenter = new MixedRealityGraphicsPresenter(graphicsDevice, mixedRealityGameWindow.HolographicSpace,
+                    deviceInformation.PresentationParameters);
+
+                return graphicsDevice;
+            }
+            else
+            {
+                return base.CreateDevice(deviceInformation);
             }
         }
 

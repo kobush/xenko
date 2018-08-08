@@ -193,6 +193,8 @@ namespace Xenko.Engine
             renderContext.Reset();
 
             var renderTarget = renderDrawContext.CommandList.RenderTarget;
+            if (renderTarget == null)
+                return;
 
             // If the width or height changed, we have to recycle all temporary allocated resources.
             // NOTE: We assume that they are mostly resolution dependent.

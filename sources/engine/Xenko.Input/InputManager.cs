@@ -601,6 +601,7 @@ namespace Xenko.Input
 #if XENKO_PLATFORM_UWP
                 case AppContextType.UWPXaml:
                 case AppContextType.UWPCoreWindow:
+                case AppContextType.UWPMixedReality:
                     Sources.Add(new InputSourceUWP());
                     break;
 #endif

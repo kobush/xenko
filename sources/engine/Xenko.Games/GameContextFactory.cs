@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 
 using System;
@@ -70,6 +70,9 @@ namespace Xenko.Games
                 case AppContextType.UWPCoreWindow:
                     res = NewGameContextUWPCoreWindow();
                     break;
+                case AppContextType.UWPMixedReality:
+                    res = NewGameContextUWPMixedReality();
+                    break;
                 case AppContextType.iOS:
                     res = NewGameContextiOS();
                     break;
@@ -133,6 +136,15 @@ namespace Xenko.Games
         {
 #if XENKO_PLATFORM_UWP
             return new GameContextUWPCoreWindow(null);
+#else
+            return null;
+#endif
+        }
+
+        public static GameContext NewGameContextUWPMixedReality()
+        {
+#if XENKO_PLATFORM_UWP
+            return new GameContextUWPMixedReality(null, null);
 #else
             return null;
 #endif

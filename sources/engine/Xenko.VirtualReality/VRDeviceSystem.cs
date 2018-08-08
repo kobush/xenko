@@ -80,6 +80,13 @@ namespace Xenko.VirtualReality
 #endif
                         }
                             break;
+                        case VRApi.WindowsMixedReality:
+                        {
+#if XENKO_PLATFORM_UWP
+                            Device = new Xenko.VirtualReality.WMR.MixedRealityHmd();
+#endif
+                            }
+                            break;
 //                        case VRApi.Fove:
 //                        {
 //#if XENKO_GRAPHICS_API_DIRECT3D11

@@ -104,7 +104,7 @@ namespace Xenko.Games
             this.game = game;
             if (this.game == null)
             {
-                throw new ArgumentNullException("game");
+                throw new ArgumentNullException(nameof(game));
             }
 
             lockDeviceCreation = new object();

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
+// Copyright (c) Xenko contributors (https://xenko.com) and Silicon Studio Corp. (https://www.siliconstudio.co.jp)
 // Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
 //
 // Copyright (c) 2010-2013 SharpDX - Alexandre Mutel
@@ -22,9 +22,11 @@
 // THE SOFTWARE.
 #if XENKO_PLATFORM_UWP
 using System;
+using Windows.Graphics.Holographic;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Xenko.Core.Annotations;
 
 namespace Xenko.Games
 {
@@ -49,6 +51,19 @@ namespace Xenko.Games
         {
             ContextType = AppContextType.UWPCoreWindow;
         }
+    }
+    
+    public class GameContextUWPMixedReality : GameContextWindows<CoreWindow>
+    {
+        /// <inheritDoc/>
+        public GameContextUWPMixedReality(CoreWindow control, HolographicSpace holographicSpace, int requestedWidth = 1280, int requestedHeight = 720)
+            : base(control ?? CoreWindow.GetForCurrentThread(), requestedWidth, requestedHeight)
+        {
+            ContextType = AppContextType.UWPMixedReality;
+            HolographicSpace = holographicSpace ?? throw new ArgumentNullException(nameof(holographicSpace));
+        }
+
+        public HolographicSpace HolographicSpace { get; }
     }
 }
 #endif
