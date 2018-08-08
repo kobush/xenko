@@ -1,0 +1,54 @@
+!Package
+Id: 9c2bb9e7-7cff-4294-a3d5-c514df70981e
+SerializedVersion: {Assets: 0.0.4}
+Meta:
+    Name: WindowsMixedRealityDemo
+    Version: 1.0.0.0
+    Authors: []
+    Owners: []
+    RootNamespace: WindowsMixedRealityDemo
+    Dependencies:
+        -   Name: Xenko
+            Version: 3.0.0.3-dev
+            RootAssets: []
+LocalDependencies: []
+Profiles:
+    -   Name: Shared
+        Platform: Shared
+        InheritProfiles: []
+        AssetFolders:
+            -   Path: Assets/Shared
+            -   Path: WindowsMixedRealityDemo.Game/Effects
+        ResourceFolders:
+            - Resources
+        OutputGroupDirectories: {}
+        ProjectReferences:
+            -   Id: b60cc295-5fe5-4eee-a4d6-7c08a21e8025
+                Location: WindowsMixedRealityDemo.Game/WindowsMixedRealityDemo.Game.csproj
+                Type: Library
+    -   Name: Windows
+        Platform: Windows
+        InheritProfiles: []
+        AssetFolders:
+            -   Path: Assets/Windows
+        ResourceFolders: []
+        OutputGroupDirectories: {}
+        ProjectReferences:
+            -   Id: 933f40ca-f23a-4eeb-a1c0-eed8d73cf27e
+                Location: WindowsMixedRealityDemo.Windows/WindowsMixedRealityDemo.Windows.csproj
+                Type: Executable
+    -   Name: UWP
+        Platform: UWP
+        InheritProfiles: []
+        AssetFolders:
+            -   Path: Assets/UWP
+        ResourceFolders: []
+        OutputGroupDirectories: {}
+        ProjectReferences:
+            -   Id: 629e93d2-3ed5-4424-9dc6-147a4e27df79
+                Location: WindowsMixedRealityDemo.UWP/WindowsMixedRealityDemo.UWP.csproj
+                Type: Executable
+ExplicitFolders: []
+Bundles: []
+TemplateFolders: []
+RootAssets: []
