@@ -6,6 +6,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -49,13 +50,37 @@ namespace Xenko.Graphics
                 CallingConvention = CallingConvention.StdCall
             )]
             public static extern UInt32 CreateDirect3D11DeviceFromDXGIDevice(IntPtr dxgiDevice, out IntPtr graphicsDevice);
+
+            [DllImport(
+                "d3d11.dll",
+                EntryPoint = "CreateDirect3D11SurfaceFromDXGISurface",
+                SetLastError = true,
+                CharSet = CharSet.Unicode,
+                ExactSpelling = true,
+                CallingConvention = CallingConvention.StdCall
+            )]
+            public static extern UInt32 CreateDirect3D11SurfaceFromDXGISurface(IntPtr dxgiSurface, out IntPtr direct3DSurface);
+
+            public static IDirect3DSurface CreateDirect3DSurface(IntPtr dxgiSurface)
+            {
+                IntPtr inspectableSurface;
+                uint hr = CreateDirect3D11SurfaceFromDXGISurface(dxgiSurface, out inspectableSurface);
+
+                IDirect3DSurface depthD3DSurface = null;
+                if (hr == 0)
+                {
+                    depthD3DSurface = (IDirect3DSurface)Marshal.GetObjectForIUnknown(inspectableSurface);
+                    Marshal.Release(inspectableSurface);
+                }
+
+                return depthD3DSurface;
+            }
         }
 
         private IDirect3DDevice d3dInteropDevice;
         private bool d3dDeviceSupportsVprt;
 
         private Texture backBuffer;
-        private object swapChain;
 
         // Cache whether or not the HolographicCamera.Display property can be accessed.
         static readonly bool canGetHolographicDisplayForCamera = false;
@@ -67,7 +92,7 @@ namespace Xenko.Graphics
         static readonly bool canCommitDirect3D11DepthBuffer = false;
 
 
-        private HolographicSpace holographicSpace;
+        private readonly HolographicSpace holographicSpace;
         private HolographicFrame holographicFrame;
         private SpatialLocator spatialLocator;
         private SpatialStationaryFrameOfReference stationaryReferenceFrame;
@@ -81,8 +106,7 @@ namespace Xenko.Graphics
         {
             canGetHolographicDisplayForCamera = Windows.Foundation.Metadata.ApiInformation.IsPropertyPresent("Windows.Graphics.Holographic.HolographicCamera", "Display");
             canGetDefaultHolographicDisplay = Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.Graphics.Holographic.HolographicDisplay", "GetDefault");
-            canCommitDirect3D11DepthBuffer =
-                Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.Graphics.Holographic.HolographicCameraRenderingParameters", "CommitDirect3D11DepthBuffer");
+            canCommitDirect3D11DepthBuffer = Windows.Foundation.Metadata.ApiInformation.IsMethodPresent("Windows.Graphics.Holographic.HolographicCameraRenderingParameters", "CommitDirect3D11DepthBuffer");
         }
 
         public WindowsMixedRealityGraphicsPresenter(GraphicsDevice device, HolographicSpace holographicSpace, PresentationParameters presentationParameters)
@@ -117,14 +141,35 @@ namespace Xenko.Graphics
             holographicSpace.SetDirect3D11Device(d3dInteropDevice);
 
             SetHolographicSpace(holographicSpace);
-
         }
 
+        protected internal override void OnDestroyed()
+        {
+            backBuffer.OnDestroyed();
+            backBuffer.LifetimeState = GraphicsResourceLifetimeState.Destroyed;
 
+            holographicSpace.CameraAdded -= OnCameraAdded;
+            holographicSpace.CameraRemoved -= OnCameraRemoved;
+
+            UseHolographicCameraResources(cameraResourcesDictionary =>
+            {
+                foreach (var cameraResourceses in cameraResourcesDictionary.Values)
+                {
+                    cameraResourceses.ReleaseAllDeviceResources(GraphicsDevice);
+                }
+            });
+
+            d3dInteropDevice = null;
+
+            base.OnDestroyed();
+        }
 
         protected override void ProcessPresentationParameters()
         {
-
+            // This format is required by Windows Mixed Reality devices
+            Description.BackBufferFormat = PixelFormat.R8G8B8A8_UNorm;
+            Description.DepthStencilFormat = PixelFormat.D16_UNorm;       // A single-component, 16-bit unsigned-normalized-integer format that supports 16 bits for depth.
+            //Description.DepthStencilFormat = PixelFormat.D24_UNorm_S8_UInt; // A 32-bit z-buffer format that supports 24 bits for depth and 8 bits for stencil.
         }
 
         public override Texture BackBuffer => this.backBuffer;
@@ -359,24 +404,59 @@ namespace Xenko.Graphics
             if (currentCamera == null || backBuffer == null)
                 return;
 
+            var prediction = holographicFrame.CurrentPrediction;
+
             UseHolographicCameraResources(cameraResourcesDictionary =>
             {
-                var cameraResources = cameraResourcesDictionary[currentCamera.Value];
+                foreach (var cameraPose in prediction.CameraPoses)
+                {
+                    if (cameraPose.HolographicCamera.Id != currentCamera)
+                        continue;
 
-                var width = (int)cameraResources.RenderTargetSize.Width;
-                var height = (int)cameraResources.RenderTargetSize.Height;
+                    var cameraResources = cameraResourcesDictionary[cameraPose.HolographicCamera.Id];
 
-                var context = GraphicsDevice.NativeDeviceContext;
+                    var width = (int)cameraResources.RenderTargetSize.Width;
+                    var height = (int)cameraResources.RenderTargetSize.Height;
 
-                context.CopySubresourceRegion(BackBuffer.NativeResource, 0,
-                    new SharpDX.Direct3D11.ResourceRegion(0, 0, 0, width, height, 1),
-                    cameraResources.BackBufferTexture2D, 0);
+                    var context = GraphicsDevice.NativeDeviceContext;
 
-                context.CopySubresourceRegion(BackBuffer.NativeResource, 0,
-                    new SharpDX.Direct3D11.ResourceRegion(width, 0, 0, width * 2, height, 1),
-                    cameraResources.BackBufferTexture2D, 1);
+                    int viewCount = !cameraResources.IsRenderingStereoscopic ? 1 : 2;
+                    for (int i = 0; i < viewCount; i++)
+                    {
+                        context.CopySubresourceRegion(BackBuffer.NativeResource, 0,
+                            new SharpDX.Direct3D11.ResourceRegion(i * width, 0, 0, (i + 1) * width, height, 1),
+                            cameraResources.BackBufferTexture2D, i);
+                    }
 
-                //todo: CommitDirect3D11DepthBuffer
+                    if (canCommitDirect3D11DepthBuffer)
+                    {
+                        for (int i = 0; i < viewCount; i++)
+                        {
+                            context.CopySubresourceRegion(DepthStencilBuffer.NativeResource, 0,
+                                new SharpDX.Direct3D11.ResourceRegion(i * width, 0, 0, (i + 1) * width, height, 1),
+                                cameraResources.DepthBufferTexture2D, i);
+                        }
+
+                        // On versions of the platform that support the CommitDirect3D11DepthBuffer API, we can 
+                        // provide the depth buffer to the system, and it will use depth information to stabilize 
+                        // the image at a per-pixel level.
+                        HolographicCameraRenderingParameters renderingParameters = holographicFrame.GetRenderingParameters(cameraPose);
+                        SharpDX.Direct3D11.Texture2D depthBuffer = cameraResources.DepthBufferTexture2D;
+
+                        // Direct3D interop APIs are used to provide the buffer to the WinRT API.
+                        SharpDX.DXGI.Resource1 depthStencilResource = depthBuffer.QueryInterface<SharpDX.DXGI.Resource1>();
+                        SharpDX.DXGI.Surface2 depthDxgiSurface = new SharpDX.DXGI.Surface2(depthStencilResource, 0);
+                        IDirect3DSurface depthD3DSurface = Native.CreateDirect3DSurface(depthDxgiSurface.NativePointer);
+                        if (depthD3DSurface != null)
+                        {
+                            // Calling CommitDirect3D11DepthBuffer causes the system to queue Direct3D commands to 
+                            // read the depth buffer. It will then use that information to stabilize the image as
+                            // the HolographicFrame is presented.
+                            renderingParameters.CommitDirect3D11DepthBuffer(depthD3DSurface);
+                        }
+                    }
+                }
+
             });
 
         }
@@ -621,16 +701,21 @@ namespace Xenko.Graphics
                     var renderingParameters = frame.GetRenderingParameters(pose);
                     var cameraResources = cameraResourcesDictionary[pose.HolographicCamera.Id];
 
-                    cameraResources.CreateResourcesForBackBuffer(GraphicsDevice, renderingParameters);
+                    cameraResources.CreateResourcesForBackBuffer(GraphicsDevice, renderingParameters,
+                        (SharpDX.DXGI.Format)Description.DepthStencilFormat);
+
+                    if (currentCamera == null)
+                        currentCamera = pose.HolographicCamera.Id;
 
                     if (pose.HolographicCamera.Id == currentCamera)
                     {
                         int width = (int)(cameraResources.RenderTargetSize.Width * 2);
                         int height = (int)cameraResources.RenderTargetSize.Height;
+
                         if (BackBuffer == null ||
                             BackBuffer.Width != width || BackBuffer.Height != height)
                         {
-                            Resize(width, height, (PixelFormat)cameraResources.BackBufferDxgiFormat);
+                            Resize(width, height, (PixelFormat)cameraResources.BackBufferFormat);
                         }
                     }
                 }
@@ -666,6 +751,9 @@ namespace Xenko.Graphics
                 {
                     cameraResources.ReleaseResourcesForBackBuffer(this.GraphicsDevice);
                     cameraResourcesDictionary.Remove(camera.Id);
+
+                    if (camera.Id == currentCamera)
+                        currentCamera = null;
                 }
             });
         }
@@ -692,34 +780,28 @@ namespace Xenko.Graphics
             private SharpDX.Direct3D11.Texture2D backBuffer;
 
             // Direct3D rendering properties.
-            private SharpDX.DXGI.Format dxgiFormat;
+            private SharpDX.DXGI.Format backBufferFormat;
             private Size renderTargetSize;
 
             // Indicates whether the camera supports stereoscopic rendering.
             private readonly bool isStereo;
-
-            // Indicates whether this camera has a pending frame.
-            bool framePending = false;
 
             #endregion
 
 
             #region Properties
 
-            public RenderTargetView BackBufferRenderTargetView => renderTargetView;
+            public Texture2D BackBufferTexture2D => backBuffer;
 
-            public DepthStencilView DepthStencilView => depthStencilView;
-
-            public SharpDX.Direct3D11.Texture2D BackBufferTexture2D => backBuffer;
+            public Texture2D DepthBufferTexture2D => depthBuffer;
 
             // Render target properties.
 
-            public SharpDX.DXGI.Format BackBufferDxgiFormat => dxgiFormat;
+            public SharpDX.DXGI.Format BackBufferFormat => backBufferFormat;
 
             public Size RenderTargetSize => renderTargetSize;
 
             public bool IsRenderingStereoscopic => isStereo;
-
 
             #endregion
 
@@ -738,7 +820,8 @@ namespace Xenko.Graphics
             /// </summary>
             public void CreateResourcesForBackBuffer(
                 GraphicsDevice graphicsDevice,
-                HolographicCameraRenderingParameters cameraParameters)
+                HolographicCameraRenderingParameters cameraParameters,
+                SharpDX.DXGI.Format depthStencilFormat  = SharpDX.DXGI.Format.D16_UNorm)
             {
                 var device = graphicsDevice.NativeDevice;
 
@@ -776,7 +859,7 @@ namespace Xenko.Graphics
                     // Get the DXGI format for the back buffer.
                     // This information can be accessed by the app using CameraResources::GetBackBufferDXGIFormat().
                     Texture2DDescription backBufferDesc = backBuffer.Description;
-                    dxgiFormat = backBufferDesc.Format;
+                    backBufferFormat = backBufferDesc.Format;
 
                     // Check for render target size changes.
                     Size currentSize = holographicCamera.RenderTargetSize;
@@ -793,7 +876,8 @@ namespace Xenko.Graphics
                     }
 
 
-                    /*RenderTargetView l_target_view = new RenderTargetView(device, backBuffer, new RenderTargetViewDescription()
+                    /*TODO: use this to render directly to output buffer
+                     RenderTargetView l_target_view = new RenderTargetView(device, backBuffer, new RenderTargetViewDescription()
                     {
                         Format = (SharpDX.DXGI.Format)backBuffer.Description.Format,
                         Dimension = RenderTargetViewDimension.Texture2D,
@@ -826,7 +910,7 @@ namespace Xenko.Graphics
                     // Create a depth stencil view for use with 3D rendering if needed.
                     var depthStencilDesc = new Texture2DDescription
                     {
-                        Format = SharpDX.DXGI.Format.D16_UNorm,
+                        Format = depthStencilFormat,
                         Width = (int)RenderTargetSize.Width,
                         Height = (int)RenderTargetSize.Height,
                         ArraySize = IsRenderingStereoscopic ? 2 : 1, // Create two textures when rendering in stereo.
@@ -841,7 +925,7 @@ namespace Xenko.Graphics
                         var depthStencilViewDesc = new DepthStencilViewDescription();
                         depthStencilViewDesc.Dimension = IsRenderingStereoscopic ? DepthStencilViewDimension.Texture2DArray : DepthStencilViewDimension.Texture2D;
                         depthStencilViewDesc.Texture2DArray.ArraySize = IsRenderingStereoscopic ? 2 : 0;
-                        depthStencilViewDesc.Format = SharpDX.DXGI.Format.D16_UNorm;
+                        depthStencilViewDesc.Format = depthStencilFormat; 
                         depthStencilView = new DepthStencilView(device, depthBuffer, depthStencilViewDesc);
                     }
                 }

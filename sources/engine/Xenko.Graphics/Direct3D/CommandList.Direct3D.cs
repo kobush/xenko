@@ -524,9 +524,12 @@ namespace Xenko.Graphics
             // Check that the DepthStencilBuffer has a Stencil if Clear Stencil is requested
             if ((options & DepthStencilClearOptions.Stencil) != 0)
             {
+/*
                 if (!depthStencilBuffer.HasStencil)
                     throw new InvalidOperationException(string.Format(FrameworkResources.NoStencilBufferForDepthFormat, depthStencilBuffer.ViewFormat));
-                flags |= SharpDX.Direct3D11.DepthStencilClearFlags.Stencil;
+*/
+                if (depthStencilBuffer.HasStencil)
+                    flags |= SharpDX.Direct3D11.DepthStencilClearFlags.Stencil;
             }
 
             NativeDeviceContext.ClearDepthStencilView(depthStencilBuffer.NativeDepthStencilView, flags, depth, stencil);
