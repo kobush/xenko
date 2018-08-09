@@ -1,7 +1,12 @@
+// Copyright (c) Xenko contributors (https://xenko.com) 
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
+#if  XENKO_PLATFORM_UWP
+
 using System;
 using Xenko.Core.Mathematics;
 
-namespace Xenko.VirtualReality.WMR
+namespace Xenko.VirtualReality
 {
     public class WindowsMixedRealityTouchController : TouchController
     {
@@ -56,3 +61,5 @@ namespace Xenko.VirtualReality.WMR
         }
     }
 }
+
+#endif

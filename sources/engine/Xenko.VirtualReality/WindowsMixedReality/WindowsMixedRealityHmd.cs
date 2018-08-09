@@ -1,3 +1,6 @@
+// Copyright (c) Xenko contributors (https://xenko.com) 
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #if  XENKO_PLATFORM_UWP
 
 using System;
@@ -7,8 +10,9 @@ using Xenko.Core.Mathematics;
 using Xenko.Games;
 using Xenko.Graphics;
 
-namespace Xenko.VirtualReality.WMR
+namespace Xenko.VirtualReality
 {
+
     internal class WindowsMixedRealityHmd : VRDevice
     {
         private WindowsMixedRealityGraphicsPresenter presenter;
@@ -86,18 +90,16 @@ namespace Xenko.VirtualReality.WMR
         public override void Update(GameTime gameTime)
         {
             // update camera pose
-     //TODO;       var sources = spatialInteractionManager.GetDetectedSourcesAtTimestamp(prediction.Timestamp);
+            //TODO var sources = spatialInteractionManager.GetDetectedSourcesAtTimestamp(prediction.Timestamp);
 
             if (presenter.TryUpdateSpatialLocation(out var spatialLocation))
             {
                 deviceState = DeviceState.Valid;
 
-                headPosition = spatialLocation.Position;
-                headRotation = spatialLocation.Orientation;
-                headLinearVelocity = spatialLocation.AbsoluteLinearVelocity;
-                headAngularVelocity = ((Quaternion)spatialLocation.AbsoluteAngularVelocity).YawPitchRoll;
-
-
+                headPosition = spatialLocation.Position.ToXenkoVector3();
+                headRotation = spatialLocation.Orientation.ToXenkoQuaternion();
+                headLinearVelocity = spatialLocation.AbsoluteLinearVelocity.ToXenkoVector3();
+                headAngularVelocity = spatialLocation.AbsoluteAngularVelocity.ToXenkoQuaternion().YawPitchRoll;
             }
             else
             {

@@ -1,3 +1,6 @@
+// Copyright (c) Xenko contributors (https://xenko.com) 
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #if XENKO_PLATFORM_UWP
 
 using System;

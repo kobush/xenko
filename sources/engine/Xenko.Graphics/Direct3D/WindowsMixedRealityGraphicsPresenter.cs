@@ -1,23 +1,22 @@
+// Copyright (c) Xenko contributors (https://xenko.com) 
+// Distributed under the MIT license. See the LICENSE.md file in the project root for more information.
+
 #if XENKO_PLATFORM_UWP
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 using Windows.Foundation;
 using Windows.Graphics.DirectX.Direct3D11;
 using Windows.Graphics.Holographic;
-using Windows.Perception;
 using Windows.Perception.Spatial;
-using Windows.UI.Input.Spatial;
+
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
-using SharpDX.Mathematics.Interop;
 
-using Xenko.Core;
 using Xenko.Core.Annotations;
 using Xenko.Core.Collections;
 using Xenko.Core.Mathematics;
@@ -309,7 +308,7 @@ namespace Xenko.Graphics
 
                 // The projection transform for each frame is provided by the HolographicCameraPose.
                 HolographicStereoTransform cameraProjectionTransform = cameraPose.ProjectionTransform;
-                cameraProjection = eye == 0 ? cameraProjectionTransform.Left : cameraProjectionTransform.Right;
+                cameraProjection = eye == 0 ? cameraProjectionTransform.Left.ToXenkoMatrix() : cameraProjectionTransform.Right.ToXenkoMatrix();
 
                 // Get a container object with the view and projection matrices for the given
                 // pose in the given coordinate system.
@@ -335,7 +334,7 @@ namespace Xenko.Graphics
                 // Update the view matrices. Holographic cameras (such as Microsoft HoloLens) are
                 // constantly moving relative to the world. The view matrices need to be updated
                 // every frame.
-                cameraView = eye == 0 ? viewCoordinateSystemTransform.Left : viewCoordinateSystemTransform.Right;
+                cameraView = eye == 0 ? viewCoordinateSystemTransform.Left.ToXenkoMatrix() : viewCoordinateSystemTransform.Right.ToXenkoMatrix();
 
                 /*coordinateSystem = AttachedReferenceFrame.GetStationaryCoordinateSystemAtTimestamp(prediction.Timestamp);
                     viewTransformContainer = cameraPose.TryGetViewTransform(coordinateSystem);
