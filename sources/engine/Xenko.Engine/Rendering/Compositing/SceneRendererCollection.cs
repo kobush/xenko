@@ -19,13 +19,15 @@ namespace Xenko.Rendering.Compositing
             base.CollectCore(context);
 
             foreach (var child in Children)
-                child.Collect(context);
+                if (child != null)
+                    child.Collect(context);
         }
 
         protected override void DrawCore(RenderContext context, RenderDrawContext drawContext)
         {
             foreach (var child in Children)
-                child.Draw(drawContext);
+                if (child != null)
+                    child.Draw(drawContext);
         }
 
         public void Add(ISceneRenderer child)

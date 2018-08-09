@@ -1413,6 +1413,29 @@ namespace Xenko.Core.Mathematics
             return Equals((Vector2)value);
         }
 
+
+#if XENKO_PLATFORM_UWP
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Vector2"/> to <see cref="System.Numerics.Vector2"/>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The result of the conversion.</returns>
+        public static implicit operator System.Numerics.Vector2(Vector2 value)
+        {
+            return new System.Numerics.Vector2(value.X, value.Y);
+        }
+
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="System.Numerics.Vector2"/> to <see cref="Xenko.Core.Mathematics.Vector2"/>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>The result of the conversion.</returns>
+        public static implicit operator Vector2(System.Numerics.Vector2 value)
+        {
+            return new Vector2(value.X, value.Y);
+        }
+#endif
+
 #if WPFInterop
         /// <summary>
         /// Performs an implicit conversion from <see cref="Xenko.Core.Mathematics.Vector2"/> to <see cref="System.Windows.Point"/>.

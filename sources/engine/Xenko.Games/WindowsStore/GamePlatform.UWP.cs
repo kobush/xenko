@@ -116,7 +116,8 @@ namespace Xenko.Games
                     gameWindow.NativeWindow, deviceInformation.GraphicsProfile);
 
                 graphicsDevice.ColorSpace = deviceInformation.PresentationParameters.ColorSpace;
-                graphicsDevice.Presenter = new MixedRealityGraphicsPresenter(graphicsDevice, mixedRealityGameWindow.HolographicSpace,
+                graphicsDevice.Presenter = new WindowsMixedRealityGraphicsPresenter(graphicsDevice, 
+                    mixedRealityGameWindow.HolographicSpace,
                     deviceInformation.PresentationParameters);
 
                 return graphicsDevice;

@@ -83,7 +83,7 @@ namespace Xenko.VirtualReality
                         case VRApi.WindowsMixedReality:
                         {
 #if XENKO_PLATFORM_UWP
-                            Device = new Xenko.VirtualReality.WMR.MixedRealityHmd();
+                            Device = new Xenko.VirtualReality.WMR.WindowsMixedRealityHmd();
 #endif
                             }
                             break;

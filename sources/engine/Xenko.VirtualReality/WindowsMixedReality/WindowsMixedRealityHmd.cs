@@ -1,15 +1,18 @@
 #if  XENKO_PLATFORM_UWP
 
 using System;
+using Windows.Perception.Spatial;
+using Windows.UI.Input.Spatial;
 using Xenko.Core.Mathematics;
 using Xenko.Games;
 using Xenko.Graphics;
 
 namespace Xenko.VirtualReality.WMR
 {
-    public class MixedRealityHmd : VRDevice
+    internal class WindowsMixedRealityHmd : VRDevice
     {
-        private MixedRealityGraphicsPresenter presenter;
+        private WindowsMixedRealityGraphicsPresenter presenter;
+        private SpatialInteractionManager spatialInteractionManager;
 
         private bool canInitialize = true;
         private DeviceState deviceState = DeviceState.Valid;
@@ -21,6 +24,9 @@ namespace Xenko.VirtualReality.WMR
 
         private Size2 optimalRenderFrameSize = new Size2(2200, 2200);
         private Size2 actualRenderFrameSize;
+
+        private WindowsMixedRealityTouchController leftHandController;
+        private WindowsMixedRealityTouchController rightHandController;
 
         public override Size2 OptimalRenderFrameSize => optimalRenderFrameSize;
 
@@ -36,15 +42,17 @@ namespace Xenko.VirtualReality.WMR
 
         public override bool CanInitialize => canInitialize;
         public override DeviceState State => deviceState;
+
         public override Vector3 HeadPosition => headPosition;
         public override Quaternion HeadRotation => headRotation;
         public override Vector3 HeadLinearVelocity => headLinearVelocity;
         public override Vector3 HeadAngularVelocity => headAngularVelocity;
 
-        public override TouchController LeftHand { get; }
-        public override TouchController RightHand { get; }
+        public override TouchController LeftHand => leftHandController;
 
-        public MixedRealityHmd()
+        public override TouchController RightHand => rightHandController;
+
+        public WindowsMixedRealityHmd()
         {
             VRApi = VRApi.WindowsMixedReality;
             SupportsOverlays = false;
@@ -52,9 +60,9 @@ namespace Xenko.VirtualReality.WMR
 
         public override void Enable(GraphicsDevice device, GraphicsDeviceManager graphicsDeviceManager, bool requireMirror, int mirrorWidth, int mirrorHeight)
         {
-            presenter = device.Presenter as MixedRealityGraphicsPresenter;
+            presenter = device.Presenter as WindowsMixedRealityGraphicsPresenter;
             if (presenter == null)
-                throw new InvalidOperationException($"{nameof(MixedRealityGraphicsPresenter)} is required for Windows Mixed Reality");
+                throw new InvalidOperationException($"{nameof(WindowsMixedRealityGraphicsPresenter)} is required for Windows Mixed Reality");
 
             if (presenter.BackBuffer != null)
             {
@@ -69,16 +77,60 @@ namespace Xenko.VirtualReality.WMR
                     TextureFlags.RenderTarget | TextureFlags.ShaderResource);
             }
 
-            //TODO: create touch controlers
-        }
+            this.spatialInteractionManager = SpatialInteractionManager.GetForCurrentView();
 
-        public override void Commit(CommandList commandList, Texture renderFrame)
-        {
+            leftHandController = new WindowsMixedRealityTouchController(TouchControllerHand.Left);
+            rightHandController = new WindowsMixedRealityTouchController(TouchControllerHand.Right);
         }
 
         public override void Update(GameTime gameTime)
         {
-            //nothing needed
+            // update camera pose
+     //TODO;       var sources = spatialInteractionManager.GetDetectedSourcesAtTimestamp(prediction.Timestamp);
+
+            if (presenter.TryUpdateSpatialLocation(out var spatialLocation))
+            {
+                deviceState = DeviceState.Valid;
+
+                headPosition = spatialLocation.Position;
+                headRotation = spatialLocation.Orientation;
+                headLinearVelocity = spatialLocation.AbsoluteLinearVelocity;
+                headAngularVelocity = ((Quaternion)spatialLocation.AbsoluteAngularVelocity).YawPitchRoll;
+
+
+            }
+            else
+            {
+                deviceState = DeviceState.OutOfRange;
+            }
+        }
+
+        public override void ReadEyeParameters(Eyes eye, float near, float far, 
+            ref Vector3 cameraPosition, ref Matrix cameraRotation, 
+            bool ignoreHeadRotation, bool ignoreHeadPosition, 
+            out Matrix view, out Matrix projection)
+        {
+            Viewport viewport;
+            if (!presenter.TryGetCameraPose(eye == Eyes.Left ? 0 : 1, near, far, out viewport, out view, out projection))
+            {
+                return;
+            }
+
+            /*if (ignoreHeadPosition)
+            {
+                view.TranslationVector = Vector3.Zero;
+            }
+
+            if (ignoreHeadRotation)
+            {
+                // keep the scale just in case
+                view.Row1 = new Vector4(view.Row1.Length(), 0, 0, 0);
+                view.Row2 = new Vector4(0, view.Row2.Length(), 0, 0);
+                view.Row3 = new Vector4(0, 0, view.Row3.Length(), 0);
+            }
+
+            view = Matrix.Translation(-cameraPosition) * cameraRotation * view;*/
+
         }
 
         public override void Draw(GameTime gameTime)
@@ -102,30 +154,10 @@ namespace Xenko.VirtualReality.WMR
                 0);*/
 
 
-            headPosition = presenter.HeadPosition;
-            headRotation = Quaternion.RotationMatrix(Matrix.LookAtRH(presenter.HeadPosition, presenter.HeadPosition + presenter.HeadDirection, presenter.HeadUpDirection));
         }
 
-        public override void ReadEyeParameters(Eyes eye, float near, float far, 
-            ref Vector3 cameraPosition, ref Matrix cameraRotation, 
-            bool ignoreHeadRotation, bool ignoreHeadPosition, 
-            out Matrix view, out Matrix projection)
+        public override void Commit(CommandList commandList, Texture renderFrame)
         {
-            presenter.GetCameraPose(eye == Eyes.Left ? 0 : 1, out view, out projection);
-
-            return;
-
-            view.Decompose(out var eyeScale, out Quaternion eyeRotation, out var eyePosition);
-
-            //TODO: eyeScale
-
-            var camRot = Quaternion.RotationMatrix(cameraRotation);
-
-            var position = cameraPosition + Vector3.Transform(eyePosition * ViewScaling, camRot);
-            var rotation = Matrix.RotationQuaternion(eyeRotation) * Matrix.Scaling(ViewScaling) * Matrix.RotationQuaternion(camRot);
-            var finalUp = Vector3.TransformCoordinate(Vector3.UnitY, rotation);
-            var finalForward = Vector3.TransformCoordinate(-Vector3.UnitZ, rotation);
-            view = Matrix.LookAtRH(position, position + finalForward, finalUp);
         }
     }
 }

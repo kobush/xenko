@@ -194,7 +194,7 @@ SharedRenderers:
         Clear:
             Id: 24b329f8-9806-4ea9-8c41-516bc5c2f4a2
             Color: {R: 0.0, G: 0.0, B: 0.0, A: 1.0}
-        LightProbes: true
+        LightProbes: false
         OpaqueRenderStage: ref!! c928ebaa-f866-4ae1-aacb-df5a6a0951ed
         TransparentRenderStage: ref!! 1b463990-0751-4111-a8f0-90aad5069e16
         ShadowMapRenderStages: {}
@@ -218,7 +218,7 @@ Game: !Xenko.Rendering.Compositing.SceneCameraRenderer,Xenko.Engine
         Id: 82568e46-92e7-421a-8dca-114a74e0cd69
         Children:
             d39c5ddbf8b7d5ca02bafb6496b1cc3c*: !Xenko.Rendering.Compositing.ForwardRenderer,Xenko.Engine ref!! dba98454-d8fb-4885-8b9c-c9e39a6e7fdc
-            01d338078e9b21121ead0868932613dd: !Xenko.Rendering.Compositing.DebugRenderer,Xenko.Engine ref!! 9631548b-2ac6-46f3-a03b-3b7a8f91d151
+            01d338078e9b21121ead0868932613dd*: null
     RenderMask: All
 SingleView: !Xenko.Rendering.Compositing.ForwardRenderer,Xenko.Engine ref!! 2cab2c78-4b27-4f69-8f2c-65a2a311e943
 Editor: !Xenko.Rendering.Compositing.ForwardRenderer,Xenko.Engine ref!! ee0ae1a7-ed71-4019-9f7b-2307ff25163b

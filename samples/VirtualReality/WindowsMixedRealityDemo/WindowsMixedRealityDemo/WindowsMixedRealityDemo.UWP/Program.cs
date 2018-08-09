@@ -20,8 +20,15 @@ namespace WindowsMixedRealityDemo
         [MTAThread]
         public static void Main()
         {
-            var viewFactory = new AppViewSource();
-            CoreApplication.Run(viewFactory);
+            if (HolographicSpace.IsSupported && HolographicSpace.IsAvailable)
+            {
+                var viewFactory = new AppViewSource();
+                CoreApplication.Run(viewFactory);
+            }
+            else
+            {
+                //TODO:
+            }
         }
 
         private class AppViewSource : IFrameworkViewSource
@@ -84,6 +91,7 @@ namespace WindowsMixedRealityDemo
 
                 // Register for notifications that the app window is losing focus.
                 window.VisibilityChanged += this.OnVisibilityChanged;
+
 
                 // Create a holographic space for the core window for the current view.
                 // Presenting holographic frames that are created by this holographic space will put
