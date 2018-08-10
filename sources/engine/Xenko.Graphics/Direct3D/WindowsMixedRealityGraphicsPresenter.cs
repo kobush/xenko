@@ -102,6 +102,12 @@ namespace Xenko.Graphics
         private readonly object cameraResourcesLock = new object();
         private uint? currentCamera;
 
+        public HolographicSpace HolographicSpace => holographicSpace;
+
+        public HolographicFrame HolographicFrame => holographicFrame;
+
+        public SpatialStationaryFrameOfReference StationaryReferenceFrame => stationaryReferenceFrame;
+
         static WindowsMixedRealityGraphicsPresenter()
         {
             canGetHolographicDisplayForCamera = Windows.Foundation.Metadata.ApiInformation.IsPropertyPresent("Windows.Graphics.Holographic.HolographicCamera", "Display");
@@ -314,7 +320,7 @@ namespace Xenko.Graphics
 
             location = spatialLocator.TryLocateAtTimestamp(prediction.Timestamp, stationaryReferenceFrame.CoordinateSystem);
             if (location == null)
-            {
+            { 
                 Debug.WriteLine("Can't update spatial location.");
             }
             return location != null;
@@ -538,7 +544,7 @@ namespace Xenko.Graphics
             //   occurred.
         }
 
-        void OnHolographicDisplayIsAvailableChanged(object o, object args)
+        private void OnHolographicDisplayIsAvailableChanged(object o, object args)
         {
             // Get the spatial locator for the default HolographicDisplay, if one is available.
             SpatialLocator spatialLocator = null;
@@ -589,7 +595,7 @@ namespace Xenko.Graphics
             }
         }
 
-        void OnLocatabilityChanged(SpatialLocator sender, Object args)
+        private void OnLocatabilityChanged(SpatialLocator sender, Object args)
         {
             switch (sender.Locatability)
             {
@@ -620,7 +626,7 @@ namespace Xenko.Graphics
             }
         }
 
-        public void OnCameraAdded(
+        private void OnCameraAdded(
             HolographicSpace sender,
             HolographicSpaceCameraAddedEventArgs args
         )
@@ -660,7 +666,7 @@ namespace Xenko.Graphics
             task1.Start();
         }
 
-        public void OnCameraRemoved(
+        private void OnCameraRemoved(
             HolographicSpace sender,
             HolographicSpaceCameraRemovedEventArgs args
         )
@@ -692,7 +698,7 @@ namespace Xenko.Graphics
         /// resources for back buffers that have changed.
         /// Locks the set of holographic camera resources until the function exits.
         /// </summary>
-        public void EnsureCameraResources(HolographicFrame frame, HolographicFramePrediction prediction)
+        private void EnsureCameraResources(HolographicFrame frame, HolographicFramePrediction prediction)
         {
             UseHolographicCameraResources(cameraResourcesDictionary =>
             {
@@ -726,7 +732,7 @@ namespace Xenko.Graphics
         /// Prepares to allocate resources and adds resource views for a camera.
         /// Locks the set of holographic camera resources until the function exits.
         /// </summary>
-        public void AddHolographicCamera(HolographicCamera camera)
+        private void AddHolographicCamera(HolographicCamera camera)
         {
             UseHolographicCameraResources(cameraResourcesDictionary =>
             {

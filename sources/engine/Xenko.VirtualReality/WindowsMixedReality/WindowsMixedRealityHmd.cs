@@ -4,7 +4,6 @@
 #if  XENKO_PLATFORM_UWP
 
 using System;
-using Windows.Perception.Spatial;
 using Windows.UI.Input.Spatial;
 using Xenko.Core.Mathematics;
 using Xenko.Games;
@@ -42,7 +41,7 @@ namespace Xenko.VirtualReality
 
         public override Texture MirrorTexture { get; protected set; }
 
-        public override float RenderFrameScaling { get; set; } = 1f;
+        public override float RenderFrameScaling { get; set; } = 1f; //TODO: add support for viewport scaling
 
         public override bool CanInitialize => canInitialize;
         public override DeviceState State => deviceState;
@@ -53,7 +52,6 @@ namespace Xenko.VirtualReality
         public override Vector3 HeadAngularVelocity => headAngularVelocity;
 
         public override TouchController LeftHand => leftHandController;
-
         public override TouchController RightHand => rightHandController;
 
         public WindowsMixedRealityHmd()
@@ -82,6 +80,12 @@ namespace Xenko.VirtualReality
             }
 
             this.spatialInteractionManager = SpatialInteractionManager.GetForCurrentView();
+/*
+            this.spatialInteractionManager.SourceDetected += 
+            this.spatialInteractionManager.SourcePressed += 
+            this.spatialInteractionManager.SourceUpdated += 
+            this.spatialInteractionManager.SourceReleased += 
+*/
 
             leftHandController = new WindowsMixedRealityTouchController(TouchControllerHand.Left);
             rightHandController = new WindowsMixedRealityTouchController(TouchControllerHand.Right);
@@ -90,8 +94,6 @@ namespace Xenko.VirtualReality
         public override void Update(GameTime gameTime)
         {
             // update camera pose
-            //TODO var sources = spatialInteractionManager.GetDetectedSourcesAtTimestamp(prediction.Timestamp);
-
             if (presenter.TryUpdateSpatialLocation(out var spatialLocation))
             {
                 deviceState = DeviceState.Valid;
@@ -103,7 +105,18 @@ namespace Xenko.VirtualReality
             }
             else
             {
-                deviceState = DeviceState.OutOfRange;
+                deviceState = DeviceState.Invalid;
+            }
+
+            var coordinateSystem = presenter.StationaryReferenceFrame.CoordinateSystem;
+
+            var sources = spatialInteractionManager.GetDetectedSourcesAtTimestamp(presenter.HolographicFrame.CurrentPrediction.Timestamp);
+            foreach (var sourceState in sources)
+            {
+                if (sourceState.Source.Handedness == SpatialInteractionSourceHandedness.Left)
+                    leftHandController.Update(gameTime, sourceState, coordinateSystem);
+                if (sourceState.Source.Handedness == SpatialInteractionSourceHandedness.Right)
+                    rightHandController.Update(gameTime, sourceState, coordinateSystem);
             }
         }
 
@@ -112,13 +125,11 @@ namespace Xenko.VirtualReality
             bool ignoreHeadRotation, bool ignoreHeadPosition, 
             out Matrix view, out Matrix projection)
         {
-            Viewport viewport;
+            Viewport viewport; //TODO: pass viewport back to Renderer
             if (!presenter.TryGetCameraPose(eye == Eyes.Left ? 0 : 1, near, far, out viewport, out view, out projection))
-            {
                 return;
-            }
 
-            /*if (ignoreHeadPosition)
+            if (ignoreHeadPosition)
             {
                 view.TranslationVector = Vector3.Zero;
             }
@@ -131,12 +142,12 @@ namespace Xenko.VirtualReality
                 view.Row3 = new Vector4(0, 0, view.Row3.Length(), 0);
             }
 
-            view = Matrix.Translation(-cameraPosition) * cameraRotation * view;*/
-
+            view = Matrix.Translation(-cameraPosition) * cameraRotation * view;
         }
 
         public override void Draw(GameTime gameTime)
         {
+            //TODO: adjust clear color to Opaque/Transparent display
             /*// Clear the back buffer and depth stencil view.
             if (canGetHolographicDisplayForCamera &&
                 cameraPose.HolographicCamera.Display.IsOpaque)
@@ -154,8 +165,6 @@ namespace Xenko.VirtualReality
                 SharpDX.Direct3D11.DepthStencilClearFlags.Depth | SharpDX.Direct3D11.DepthStencilClearFlags.Stencil,
                 1.0f,
                 0);*/
-
-
         }
 
         public override void Commit(CommandList commandList, Texture renderFrame)
