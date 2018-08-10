@@ -1,0 +1,6 @@
+!Texture
+Id: 7a0caa6d-5bff-4131-b5bb-617578e1935a
+SerializedVersion: {Xenko: 2.0.0.0}
+Tags: []
+Source: ../../../../../../../../../Samples/Xenko/VRSandbox/VRSandbox/Resources/Textures/normalmapUpper.png
+Type: !NormalMapTextureType {}

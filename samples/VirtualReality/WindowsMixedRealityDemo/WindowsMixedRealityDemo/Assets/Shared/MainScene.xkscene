@@ -13,8 +13,10 @@ Hierarchy:
         - ref!! c448523c-6750-40a7-9953-76ef22a8dc01
         - ref!! abcf1384-64d2-4b7b-8a83-291a9ef8a995
         - ref!! 381a013a-6a34-4f8e-a39f-c4792e7c2d70
+        - ref!! 5469d6d5-02a1-4f0b-a9a1-32380135f2af
     Parts:
-        -   Entity:
+        -   Folder: Objects
+            Entity:
                 Id: 093bce7f-d55b-49c9-9c65-670eb9bcbdf3
                 Name: Ground
                 Components:
@@ -45,6 +47,54 @@ Hierarchy:
                         NearClipPlane: 0.85
                         Slot: 42b53d88-3b48-4c6f-9702-31bae96d1c8d
         -   Entity:
+                Id: 2df812a4-fca5-4c0e-895c-49db11bfc218
+                Name: Entity
+                Components:
+                    e9cb76c6ad28639f2154f59d6fa787c0: !TransformComponent
+                        Id: a93b9ba7-8343-4374-9e5b-d4c73dc8d084
+                        Position: {X: 0.0, Y: 0.0, Z: 0.1}
+                        Rotation: {X: -0.353553355, Y: 0.6123724, Z: -0.6123724, W: 0.353553355}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children: {}
+                    15d7f6b23c72f1176f06f45d77cb0468: !ModelComponent
+                        Id: cecda076-a8a7-4d2a-9ece-db5f1f0f0c3a
+                        Model: fcaf09bf-a0a8-4c87-b3c4-02a341fa5f11:Models/HandModelLeft
+                        IsShadowCaster: false
+                        Materials: {}
+                    2eaf9758471ecd4797694b3ce4a30b67: !RigidbodyComponent
+                        Id: a1891d3d-486a-4a1f-ab2e-eef579c664cd
+                        CollisionGroup: CharacterFilter
+                        CanSleep: false
+                        Restitution: 0.0
+                        Friction: 0.5
+                        RollingFriction: 0.0
+                        CcdMotionThreshold: 0.0
+                        CcdSweptSphereRadius: 0.0
+                        IsTrigger: false
+                        IsKinematic: true
+                        Mass: 3.445
+                        LinearDamping: 0.0
+                        AngularDamping: 0.0
+                        OverrideGravity: false
+                        Gravity: {X: 0.0, Y: 0.0, Z: 0.0}
+                        NodeName: null
+                        ColliderShapes:
+                            3cfa40f03cc0c6aba934b853019bd348: !BoxColliderShapeDesc
+                                Is2D: false
+                                Size: {X: 0.1, Y: 0.1, Z: 0.03}
+                                LocalOffset: {X: 0.0, Y: 0.05, Z: 0.0}
+                                LocalRotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                            8072089c405290a3ba111ed1bcd2349a: !BoxColliderShapeDesc
+                                Is2D: false
+                                Size: {X: 0.1, Y: 0.08, Z: 0.03}
+                                LocalOffset: {X: 0.0, Y: 0.14, Z: 0.01}
+                                LocalRotation: {X: 0.258819044, Y: 0.0, Z: 0.0, W: 0.9659258}
+                    f2bf72b55ab9939690cc8bbac2a220c3: !AnimationComponent
+                        Id: d6c6235e-602f-4fa7-af6e-a9c24656cf96
+                        Animations:
+                            b40b3a165368983b141d39d364f7b389~Grab: 842c5c83-da7f-433f-98cb-67cc728ee9b2:Animation/Grab_L
+        -   Folder: Objects
+            Entity:
                 Id: 381a013a-6a34-4f8e-a39f-c4792e7c2d70
                 Name: Cone
                 Components:
@@ -59,6 +109,99 @@ Hierarchy:
                         Model: c19db54f-6104-400b-bac3-f8de1b10e05e:Cone
                         Materials: {}
         -   Entity:
+                Id: 5469d6d5-02a1-4f0b-a9a1-32380135f2af
+                Name: PlayerCharacter
+                Components:
+                    42e2b179e89844f0dcff352a9028a447: !TransformComponent
+                        Id: f57814f4-c31c-4167-9c72-08af913cc880
+                        Position: {X: 0.0, Y: 1.217, Z: 0.606}
+                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children:
+                            2d1c4e222d97ab0436d42fa203b49111: ref!! 630eb9fa-290b-42fb-b0fc-cca13d0cd398
+                            ed9dd372602837063dadb98a61bc5a9d: ref!! 51c24a9a-32fa-468b-b5e1-c77e862e0647
+                    4fced655c8b4109eb2d9b69f437d11c7: !WindowsMixedRealityDemo.Player.PlayerInput,WindowsMixedRealityDemo.Game
+                        Id: d75d89ee-221d-4cb7-b000-8d481df0db63
+                        ControllerIndex: 0
+                        DeadZone: 0.25
+                        Camera: ref!! 6649d98b-cd89-4886-a1c3-a93a6cc053a5
+        -   Folder: null
+            Entity:
+                Id: 67ab239e-851c-49c4-963d-03c86d5c5c21
+                Name: RightHand
+                Components:
+                    0bd275d9d5b99c417ccb5daea33da4d6: !TransformComponent
+                        Id: 51c24a9a-32fa-468b-b5e1-c77e862e0647
+                        Position: {X: 0.2, Y: -0.3, Z: -0.35}
+                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children:
+                            eec2934ea9cb81f0ccea8b577c800c47: ref!! f679d6be-e008-4940-b286-1e96e8492534
+                    eed27d0b694b4366c469434de0bcfbe6: !WindowsMixedRealityDemo.Player.HandController,WindowsMixedRealityDemo.Game
+                        Id: 252c8949-74ad-4e14-8ac8-e3d64ea4adc3
+                        Head: ref!! 2b8dfbfb-a815-4eeb-8ef2-3124addfdfd6
+                        MaxMoveSpeed: 1.0
+                        Hand: Right
+                    eff1b79fad31ea80cad41c5a323e1be0: !RigidbodyComponent
+                        Id: a8d35f1d-581e-4f6e-b4f7-028a283837ed
+                        CanSleep: false
+                        Restitution: 0.0
+                        Friction: 0.5
+                        RollingFriction: 0.0
+                        CcdMotionThreshold: 0.0
+                        CcdSweptSphereRadius: 0.0
+                        IsTrigger: false
+                        IsKinematic: false
+                        Mass: 1.0
+                        LinearDamping: 0.0
+                        AngularDamping: 0.0
+                        OverrideGravity: false
+                        Gravity: {X: 0.0, Y: 0.0, Z: 0.0}
+                        NodeName: null
+                        ColliderShapes:
+                            6ea5dd09d3f61bb9e8dff43125d48430: !SphereColliderShapeDesc
+                                Is2D: false
+                                Radius: 0.02
+                                LocalOffset: {X: -0.05, Y: 0.0, Z: -0.08}
+        -   Entity:
+                Id: 86b0e64b-fa34-46c4-bbdd-c082641a40c1
+                Name: LeftHand
+                Components:
+                    0bd275d9d5b99c417ccb5daea33da4d6: !TransformComponent
+                        Id: 630eb9fa-290b-42fb-b0fc-cca13d0cd398
+                        Position: {X: -0.2, Y: -0.3, Z: -0.35}
+                        Rotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children:
+                            ae790906b4149b41372d442e1a6d5739: ref!! a93b9ba7-8343-4374-9e5b-d4c73dc8d084
+                    eed27d0b694b4366c469434de0bcfbe6: !WindowsMixedRealityDemo.Player.HandController,WindowsMixedRealityDemo.Game
+                        Id: aafc544f-58eb-4133-939b-99007dc12a8a
+                        Head: ref!! 2b8dfbfb-a815-4eeb-8ef2-3124addfdfd6
+                        MaxMoveSpeed: 1.0
+                        Hand: Left
+                    eff1b79fad31ea80cad41c5a323e1be0: !RigidbodyComponent
+                        Id: 4c1c2399-780a-4938-adf6-e163925492ee
+                        CanSleep: false
+                        Restitution: 0.0
+                        Friction: 0.5
+                        RollingFriction: 0.0
+                        CcdMotionThreshold: 0.0
+                        CcdSweptSphereRadius: 0.0
+                        IsTrigger: true
+                        IsKinematic: true
+                        Mass: 1.0
+                        LinearDamping: 0.0
+                        AngularDamping: 0.0
+                        OverrideGravity: false
+                        Gravity: {X: 0.0, Y: 0.0, Z: 0.0}
+                        NodeName: null
+                        ColliderShapes:
+                            6ea5dd09d3f61bb9e8dff43125d48430: !SphereColliderShapeDesc
+                                Is2D: false
+                                Radius: 0.02
+                                LocalOffset: {X: 0.05, Y: 0.0, Z: -0.08}
+        -   Folder: Objects
+            Entity:
                 Id: abcf1384-64d2-4b7b-8a83-291a9ef8a995
                 Name: Cube
                 Components:
@@ -98,6 +241,54 @@ Hierarchy:
                                 ComputeTransmittance: false
                         Intensity: 15.0
         -   Entity:
+                Id: c23f2026-4a96-4acf-bbfc-04d51d8b2534
+                Name: Entity
+                Components:
+                    e9cb76c6ad28639f2154f59d6fa787c0: !TransformComponent
+                        Id: f679d6be-e008-4940-b286-1e96e8492534
+                        Position: {X: 0.0, Y: 0.0, Z: 0.1}
+                        Rotation: {X: -0.353553355, Y: -0.6123724, Z: 0.6123724, W: 0.353553355}
+                        Scale: {X: 1.0, Y: 1.0, Z: 1.0}
+                        Children: {}
+                    15d7f6b23c72f1176f06f45d77cb0468: !ModelComponent
+                        Id: f56feb90-4bad-47bf-aa3b-0e2a14f2318a
+                        Model: 535aecce-e3f4-4568-b684-044d9b2eb455:Models/HandModelRight
+                        IsShadowCaster: false
+                        Materials: {}
+                    2eaf9758471ecd4797694b3ce4a30b67: !RigidbodyComponent
+                        Id: 98d0632e-a154-4862-be98-9c1d3019097a
+                        CollisionGroup: CharacterFilter
+                        CanSleep: false
+                        Restitution: 0.0
+                        Friction: 0.5
+                        RollingFriction: 0.0
+                        CcdMotionThreshold: 0.0
+                        CcdSweptSphereRadius: 0.0
+                        IsTrigger: false
+                        IsKinematic: true
+                        Mass: 3.445
+                        LinearDamping: 0.0
+                        AngularDamping: 0.0
+                        OverrideGravity: false
+                        Gravity: {X: 0.0, Y: 0.0, Z: 0.0}
+                        NodeName: null
+                        ColliderShapes:
+                            3cfa40f03cc0c6aba934b853019bd348: !BoxColliderShapeDesc
+                                Is2D: false
+                                Size: {X: 0.1, Y: 0.1, Z: 0.03}
+                                LocalOffset: {X: 0.0, Y: 0.05, Z: 0.0}
+                                LocalRotation: {X: 0.0, Y: 0.0, Z: 0.0, W: 1.0}
+                            8072089c405290a3ba111ed1bcd2349a: !BoxColliderShapeDesc
+                                Is2D: false
+                                Size: {X: 0.1, Y: 0.08, Z: 0.03}
+                                LocalOffset: {X: 0.0, Y: 0.14, Z: 0.01}
+                                LocalRotation: {X: 0.258819044, Y: 0.0, Z: 0.0, W: 0.9659258}
+                    2c9a79aca8f4834e50b9372744e370f3: !AnimationComponent
+                        Id: 5575863d-299b-45af-a2cd-186d8e0ceb5f
+                        Animations:
+                            aed8846d5441f75b4b41deb4fae6cd3b~Grab: 13012760-7c9d-49eb-82d0-531a005cbd80:Animation/Grab_R
+        -   Folder: Objects
+            Entity:
                 Id: c448523c-6750-40a7-9953-76ef22a8dc01
                 Name: Sphere
                 Components:

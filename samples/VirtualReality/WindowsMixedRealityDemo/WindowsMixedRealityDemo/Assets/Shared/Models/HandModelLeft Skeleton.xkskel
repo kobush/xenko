@@ -1,0 +1,30 @@
+!Skeleton
+Id: f502c2fc-bf3b-4041-8acc-37461887c34f
+SerializedVersion: {Xenko: 2.0.0.0}
+Tags: []
+Source: ../../../../../../../../../Samples/Xenko/VRSandbox/VRSandbox/Resources/Models/HandModelLeft.fbx
+PivotPosition: {X: 0.0, Y: 0.0, Z: 0.0}
+Nodes:
+    2a49f4f1b0b485082b3bc10d18c150b7: {Name: RootNode, Depth: 0}
+    8849fa9f7809b22b3c5d9f2c6c534538: {Name: HandModelLeft, Depth: 1}
+    4e424cd1a6e0ce821a2bf25c9c534091: {Name: root, Depth: 2}
+    fcc6d7124b085788284bdd8ca88212e3: {Name: CATRigLArm, Depth: 3}
+    fd83954b06a505b2706775988dbee67a: {Name: CATRigLArmPalm, Depth: 4}
+    9e5cfaa523ed98f7552e2ccbba431cf9: {Name: CATRigLArmDigit11, Depth: 5}
+    a327e1f21d870a8bb1f39938181dbd13: {Name: CATRigLArmDigit12, Depth: 6}
+    0c96476e4e039ec191e1467a25ef007c: {Name: CATRigLArmDigit13, Depth: 7}
+    d6f2e3aebd566eddbb341169d1eef8f3: {Name: CATRigLArmDigit21, Depth: 5}
+    c99196982f55f01a82a3e69ff895b07d: {Name: CATRigLArmDigit22, Depth: 6}
+    84295cada85d906e2d17bdc8128efca4: {Name: CATRigLArmDigit23, Depth: 7}
+    ab151eb64ebe4385cf32f4c455923d15: {Name: CATRigLArmDigit31, Depth: 5}
+    2f6ac7b8cdea46987173b9c1263eefc5: {Name: CATRigLArmDigit32, Depth: 6}
+    a99e409a006eccbe9c9a865c6d62ee48: {Name: CATRigLArmDigit33, Depth: 7}
+    c8b9f246b2db8b3253db1e26fe0095f1: {Name: CATRigLArmDigit41, Depth: 5}
+    342f51b07d683b2f604d96f8b626250c: {Name: CATRigLArmDigit42, Depth: 6}
+    d665cef9fe9e1aaa5ded3a6b9e501124: {Name: CATRigLArmDigit43, Depth: 7}
+    0c0dd54f1d76758c2c7e312d73006791: {Name: CATRigLArmDigit51, Depth: 5}
+    78a5bfdf52ef60a4e6913c913a1ca000: {Name: CATRigLArmDigit52, Depth: 6}
+    83f8c1c40f4e1c6a01e35eb4c3b6490b: {Name: CATRigLArmDigit53, Depth: 7}
+    1e846b058259d873391bde89316217bd: {Name: handLeft, Depth: 2}
+~SourceHashes:
+    3bdfe4e7709f8d3ad53691434aa17d6b~../../../../../../../../../Samples/Xenko/VRSandbox/VRSandbox/Resources/Models/HandModelLeft.fbx: 335e0e2de46ea68c9918da4ae7680215

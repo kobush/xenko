@@ -1,0 +1,27 @@
+!Model
+Id: fcaf09bf-a0a8-4c87-b3c4-02a341fa5f11
+SerializedVersion: {Xenko: 2.0.0.0}
+Tags: []
+Source: ../../../../../../../../../Samples/Xenko/VRSandbox/VRSandbox/Resources/Models/HandModelLeft.fbx
+Skeleton: f502c2fc-bf3b-4041-8acc-37461887c34f:Models/HandModelLeft Skeleton
+PivotPosition: {X: 0.0, Y: 0.0, Z: 0.0}
+Materials:
+    582359b0e7b504526254c6534e60dcae:
+        Name: SemiglossMT
+        MaterialInstance:
+            Material: 22afd006-e34e-4b75-a210-8231a459cce7:Materials/BodyGray
+    7c8c5f8d9112fb69dec5a0753e7a56cf:
+        Name: GlossMT
+        MaterialInstance:
+            Material: 8c423a2e-1697-4c7a-89b0-603d1767d0e2:Materials/BodyWhite
+    2f432bbb34348c7420ef48163dc11362:
+        Name: upperMatteMT
+        MaterialInstance:
+            Material: 32ad4ec3-94d4-456f-8075-d5a1d477ad5a:Materials/MattBlackUpper
+    6bf353e355402fe4ce714f2bbbbc0812:
+        Name: lambert1
+        MaterialInstance:
+            Material: 32ad4ec3-94d4-456f-8075-d5a1d477ad5a:Materials/MattBlackUpper
+Modifiers: {}
+~SourceHashes:
+    b0ddde98a899e710d0dc709f69e46722~../../../../../../../../../Samples/Xenko/VRSandbox/VRSandbox/Resources/Models/HandModelLeft.fbx: 335e0e2de46ea68c9918da4ae7680215

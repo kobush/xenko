@@ -1,0 +1,19 @@
+!Animation
+Id: 13012760-7c9d-49eb-82d0-531a005cbd80
+SerializedVersion: {Xenko: 2.0.0.0}
+Tags: []
+Source: ../../../../../../../../../Samples/Xenko/VRSandbox/VRSandbox/Resources/Animation/Grab_R.fbx
+ClipDuration:
+    Enabled: false
+    StartAnimationTime: 0:00:00:00.0000000
+    EndAnimationTime: 0:00:30:00.0000000
+PivotPosition: {X: 0.0, Y: 0.0, Z: 0.0}
+RepeatMode: PlayOnceHold
+Type: !StandardAnimationAssetType {}
+Skeleton: 7e5ee1e1-75cb-479e-a132-7023f74f88f3:Models/HandModelRight Skeleton
+RootMotion: false
+PreviewModel: 535aecce-e3f4-4568-b684-044d9b2eb455:Models/HandModelRight
+AnimationTimeMinimum: 0:00:00:00.0000000
+~SourceHashes:
+    e46cd2f97e3f4536b5f1398164b5c419~../../../../../../../../../Samples/Xenko/VRSandbox/VRSandbox/Resources/Animation/Grab_R.fbx: fd6cd0385dc7dd226f3ff2444035b564
+AnimationTimeMaximum: 0:00:00:00.2000000
