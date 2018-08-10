@@ -342,14 +342,6 @@ namespace Xenko.Graphics
                 if (cameraPose.HolographicCamera.Id != currentCamera)
                     continue;
 
-                /* TODO:
-                if (cameraPose.NearPlaneDistance != near)
-                    cameraPose.HolographicCamera.SetNearPlaneDistance(near); 
-                 
-                if (cameraPose.FarPlaneDistance != far)
-                    cameraPose.HolographicCamera.SetFarPlaneDistance(far);
-                 */
-
                 // The system changes the viewport on a per-frame basis for system optimizations.
                 viewport = new Viewport(
                     (float)cameraPose.Viewport.Left,
@@ -360,6 +352,23 @@ namespace Xenko.Graphics
                 // The projection transform for each frame is provided by the HolographicCameraPose.
                 HolographicStereoTransform cameraProjectionTransform = cameraPose.ProjectionTransform;
                 cameraProjection = eye == 0 ? cameraProjectionTransform.Left.ToXenkoMatrix() : cameraProjectionTransform.Right.ToXenkoMatrix();
+
+                // Cheack if far/near plane distance has changes
+                if (Math.Abs((float)cameraPose.NearPlaneDistance- near) > 1e-8f ||
+                    Math.Abs((float)cameraPose.FarPlaneDistance - far) > 1e-8f)
+                {
+                    // Update on HolographicCamera
+                    cameraPose.HolographicCamera.SetNearPlaneDistance(near);
+                    cameraPose.HolographicCamera.SetFarPlaneDistance(far);
+
+                    // This update won't be applied until next frame so need to
+                    // extract camera parameters and recaulculate projection matrix
+                    float a = cameraProjection.M11;
+                    float b = cameraProjection.M22;
+                    float aspect = b / a;
+                    float fov = 2.0f * (float)Math.Atan(1.0f / b);
+                    cameraProjection = Matrix.PerspectiveFovRH(fov, aspect, near, far);
+                }
 
                 // Get a container object with the view and projection matrices for the given
                 // pose in the given coordinate system.

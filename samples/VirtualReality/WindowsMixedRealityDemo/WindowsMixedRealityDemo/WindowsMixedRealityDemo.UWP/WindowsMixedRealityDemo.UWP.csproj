@@ -152,7 +152,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;XENKO_PLATFORM_WINDOWS;XENKO_PLATFORM_UWP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;XENKO_PLATFORM_WINDOWS;XENKO_PLATFORM_UWP;CODE_ANALYSIS;XENKO_PLATFORM_UWP</DefineConstants>
     <OutputPath>..\Bin\UWP-x86\Debug\</OutputPath>
     <IntermediateOutputPath>obj\UWP-x86\Debug\</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>

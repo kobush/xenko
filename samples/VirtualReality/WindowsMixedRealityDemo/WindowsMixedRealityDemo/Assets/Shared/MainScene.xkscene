@@ -44,7 +44,10 @@ Hierarchy:
                         Id: 6649d98b-cd89-4886-a1c3-a93a6cc053a5
                         Name: null
                         Projection: Perspective
-                        NearClipPlane: 0.85
+                        VerticalFieldOfView: 105.0
+                        FarClipPlane: 20.0
+                        UseCustomAspectRatio: true
+                        AspectRatio: 1.0
                         Slot: 42b53d88-3b48-4c6f-9702-31bae96d1c8d
         -   Entity:
                 Id: 2df812a4-fca5-4c0e-895c-49db11bfc218
